@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TravelPro — {{ page_title|default:"Customer Portal" }}</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+:root {
+    --ink:    #0c0f14;
+    --ink2:   #141921;
+    --ink3:   #1e2535;
+    --gold:   #c9a84c;
+    --gold2:  #e8c97a;
+    --gold3:  #f5e6b8;
+    --cream:  #fdf8f0;
+    --mist:   rgba(255,255,255,0.06);
+    --border: rgba(201,168,76,0.15);
+    --text:   #e8e4dc;
+    --muted:  rgba(232,228,220,0.45);
+    --nav-h:  72px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+
+/* scrollbar */
+::-webkit-scrollbar{width:6px;}
+::-webkit-scrollbar-track{background:var(--ink);}
+::-webkit-scrollbar-thumb{background:var(--ink3);border-radius:3px;}
+
+body {
+    font-family:'DM Sans',sans-serif;
+    background:var(--ink);
+    color:var(--text);
+    min-height:100vh;
+    overflow-x:hidden;
+}
+
+/* subtle grain texture overlay */
+body::before {
+    content:'';
+    position:fixed;inset:0;
+    background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events:none;
+    z-index:-1;
+    opacity:0.4;
+}
+
+/* ── TOPNAV ── */
+.topnav {
+    position:fixed;top:0;left:0;right:0;height:var(--nav-h);
+    background:rgba(12,15,20,0.85);
+    backdrop-filter:blur(20px);
+    -webkit-backdrop-filter:blur(20px);
+    border-bottom:1px solid var(--border);
+    display:flex;align-items:center;
+    padding:0 40px;
+    z-index:999;
+}
+
+/* gold top accent line */
+.topnav::before {
+    content:'';
+    position:absolute;top:0;left:0;right:0;height:1px;
+    background:linear-gradient(90deg,transparent,var(--gold),transparent);
+}
+
+.nav-brand {
+    display:flex;align-items:center;gap:12px;
+    text-decoration:none;margin-right:48px;
+    flex-shrink:0;
+}
+.nav-logo-wrap {
+    position:relative;
+    width:38px;height:38px;
+    display:flex;align-items:center;justify-content:center;
+}
+.nav-logo-wrap::before {
+    content:'';
+    position:absolute;inset:0;
+    border:1px solid var(--gold);
+    border-radius:10px;
+    opacity:0.6;
+}
+.nav-logo-icon {
+    font-size:18px;
+    filter:drop-shadow(0 0 8px rgba(201,168,76,0.4));
+}
+.nav-brand-text {
+    display:flex;flex-direction:column;line-height:1.1;
+}
+.nav-brand-name {
+    font-family:'Cormorant Garamond',serif;
+    font-size:19px;font-weight:600;
+    color:#fff;letter-spacing:0.5px;
+}
+.nav-brand-tag {
+    font-size:9px;letter-spacing:2.5px;text-transform:uppercase;
+    color:var(--gold);font-weight:500;
+}
+
+.nav-links{display:flex;align-items:center;gap:2px;flex:1;}
+.nav-link {
+    padding:8px 18px;border-radius:8px;
+    color:var(--muted);font-size:13px;font-weight:400;
+    text-decoration:none;transition:all 0.2s;
+    display:flex;align-items:center;gap:8px;
+    letter-spacing:0.2px;
+    position:relative;
+}
+.nav-link::after {
+    content:'';
+    position:absolute;bottom:0;left:50%;right:50%;
+    height:1px;background:var(--gold);
+    transition:all 0.25s;opacity:0;
+    border-radius:1px;
+}
+.nav-link:hover{color:var(--text);background:var(--mist);}
+.nav-link:hover::after{left:18px;right:18px;opacity:0.6;}
+.nav-link.active{
+    color:var(--gold2);
+    background:rgba(201,168,76,0.08);
+    font-weight:500;
+}
+.nav-link.active::after{left:18px;right:18px;opacity:1;}
+.nav-link i{font-size:14px;}
+
+.nav-right{display:flex;align-items:center;gap:12px;margin-left:auto;}
+
+.nav-user {
+    display:flex;align-items:center;gap:10px;
+    padding:6px 16px 6px 6px;
+    background:var(--mist);
+    border:1px solid var(--border);
+    border-radius:30px;
+    transition:0.2s;
+}
+.nav-user:hover{border-color:rgba(201,168,76,0.3);}
+.user-ava {
+    width:32px;height:32px;border-radius:50%;
+    background:linear-gradient(135deg,var(--gold),var(--gold2));
+    display:flex;align-items:center;justify-content:center;
+    font-size:12px;font-weight:700;color:var(--ink);
+    box-shadow:0 0 12px rgba(201,168,76,0.25);
+}
+.user-hello{font-size:12.5px;color:var(--text);letter-spacing:0.2px;}
+
+.nav-logout {
+    padding:8px 18px;border-radius:8px;
+    border:1px solid rgba(255,255,255,0.08);
+    color:var(--muted);font-size:12.5px;
+    text-decoration:none;transition:0.2s;
+    display:flex;align-items:center;gap:7px;
+    letter-spacing:0.2px;
+}
+.nav-logout:hover{
+    border-color:rgba(239,68,68,0.3);
+    color:#ef4444;background:rgba(239,68,68,0.06);
+}
+
+/* ── MAIN ── */
+.main{
+    padding-top:calc(var(--nav-h) + 40px);
+    padding-bottom:80px;
+    min-height:100vh;
+}
+.container-cus{
+    max-width:1280px;margin:0 auto;padding:0 36px;
+}
+
+/* ── CARDS ── */
+.card-cus {
+    background:var(--ink2);
+    border:1px solid rgba(255,255,255,0.06);
+    border-radius:18px;
+    padding:28px;
+    position:relative;overflow:hidden;
+}
+.card-cus::before {
+    content:'';
+    position:absolute;top:0;left:0;right:0;height:1px;
+    background:linear-gradient(90deg,transparent,rgba(201,168,76,0.2),transparent);
+}
+
+/* ── BUTTONS ── */
+.btn-gold {
+    background:linear-gradient(135deg,var(--gold),var(--gold2));
+    border:none;color:var(--ink);font-weight:600;font-size:13px;
+    padding:10px 24px;border-radius:10px;transition:all 0.25s;cursor:pointer;
+    display:inline-flex;align-items:center;gap:8px;
+    box-shadow:0 4px 16px rgba(201,168,76,0.25);
+    text-decoration:none;letter-spacing:0.3px;
+    font-family:'DM Sans',sans-serif;
+    position:relative;overflow:hidden;
+}
+.btn-gold::before {
+    content:'';
+    position:absolute;top:0;left:-100%;width:100%;height:100%;
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,0.15),transparent);
+    transition:left 0.4s;
+}
+.btn-gold:hover{
+    transform:translateY(-2px);
+    box-shadow:0 8px 24px rgba(201,168,76,0.35);
+    color:var(--ink);
+}
+.btn-gold:hover::before{left:100%;}
+
+.btn-outline-gold {
+    background:transparent;
+    border:1px solid rgba(201,168,76,0.4);
+    color:var(--gold2);font-size:13px;font-weight:500;
+    padding:10px 22px;border-radius:10px;transition:all 0.2s;
+    display:inline-flex;align-items:center;gap:7px;
+    text-decoration:none;letter-spacing:0.2px;
+    font-family:'DM Sans',sans-serif;
+}
+.btn-outline-gold:hover{
+    background:rgba(201,168,76,0.08);
+    border-color:var(--gold);color:var(--gold2);
+}
+
+/* ── FORM ── */
+.form-control,.form-select {
+    background:rgba(255,255,255,0.04);
+    border:1px solid rgba(255,255,255,0.1);
+    border-radius:10px;
+    padding:11px 16px;
+    font-size:13.5px;
+    font-family:'DM Sans',sans-serif;
+    color:var(--text);
+    transition:0.2s;
+}
+.form-control::placeholder{color:var(--muted);}
+.form-control:focus,.form-select:focus{
+    background:rgba(255,255,255,0.06);
+    border-color:rgba(201,168,76,0.5);
+    box-shadow:0 0 0 3px rgba(201,168,76,0.08);
+    color:var(--text);outline:none;
+}
+.form-select{color:var(--text);}
+.form-select option{background:var(--ink2);color:var(--text);}
+
+/* ── PAGE HEADER ── */
+.page-hero{margin-bottom:40px;}
+.page-hero h1 {
+    font-family:'Cormorant Garamond',serif;
+    font-size:36px;font-weight:600;
+    color:#fff;margin-bottom:6px;
+    letter-spacing:-0.3px;line-height:1.2;
+}
+.page-hero p{font-size:14px;color:var(--muted);}
+
+/* ── TABLE ── */
+.table thead th {
+    background:rgba(255,255,255,0.03);
+    color:var(--muted);font-weight:500;
+    font-size:10.5px;text-transform:uppercase;letter-spacing:1.2px;
+    padding:14px 18px;border:none;
+    border-bottom:1px solid rgba(255,255,255,0.06);
+}
+.table tbody td {
+    padding:15px 18px;vertical-align:middle;
+    font-size:13.5px;
+    border-bottom:1px solid rgba(255,255,255,0.04);
+    color:var(--text);background:transparent;
+}
+.table tbody tr:last-child td{border-bottom:none;}
+.table tbody tr:hover td{background:rgba(255,255,255,0.02);}
+
+/* ── MODAL ── */
+.modal-content {
+    background:var(--ink2);
+    border:1px solid rgba(255,255,255,0.08);
+    border-radius:20px;
+    color:var(--text);
+}
+.modal-header-gold {
+    background:linear-gradient(135deg,#0c0f14,#141921);
+    border-radius:20px 20px 0 0;
+    padding:24px 28px;
+    border-bottom:1px solid var(--border);
+    display:flex;justify-content:space-between;align-items:flex-start;
+}
+
+/* ── BADGE/TAGS ── */
+.badge-gold{
+    background:rgba(201,168,76,0.12);
+    border:1px solid rgba(201,168,76,0.25);
+    color:var(--gold2);
+    font-size:11px;font-weight:500;
+    padding:3px 12px;border-radius:20px;
+    letter-spacing:0.3px;
+}
+.badge-green{
+    background:rgba(16,185,129,0.1);
+    border:1px solid rgba(16,185,129,0.2);
+    color:#34d399;
+    font-size:11px;font-weight:500;
+    padding:3px 12px;border-radius:20px;
+}
+
+/* ── SECTION DIVIDER ── */
+.gold-line{
+    height:1px;
+    background:linear-gradient(90deg,transparent,var(--gold),transparent);
+    opacity:0.3;margin:32px 0;
+}
+
+/* ── MODAL FIX ── */
+.modal          { z-index: 1055 !important; }
+.modal-backdrop { z-index: 1050 !important; }
+.modal-dialog   { z-index: 1056 !important; }
+
+/* ── ANIMATION ── */
+@keyframes fadeUp {
+    from{opacity:0;transform:translateY(18px);}
+    to{opacity:1;transform:translateY(0);}
+}
+@keyframes shimmer{
+    0%{background-position:-200% center;}
+    100%{background-position:200% center;}
+}
+.main > div > *:nth-child(1){animation:fadeUp 0.5s ease 0.05s both;}
+.main > div > *:nth-child(2){animation:fadeUp 0.5s ease 0.1s both;}
+.main > div > *:nth-child(3){animation:fadeUp 0.5s ease 0.15s both;}
+.main > div > *:nth-child(4){animation:fadeUp 0.5s ease 0.2s both;}
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+    <a href="/browse/" class="nav-brand">
+        <div class="nav-logo-wrap">
+            <span class="nav-logo-icon">✈️</span>
+        </div>
+        <div class="nav-brand-text">
+            <span class="nav-brand-name">TravelPro</span>
+            <span class="nav-brand-tag">Premium Travel</span>
+        </div>
+    </a>
+
+    <div class="nav-links">
+        <a href="/browse/" class="nav-link {% if request.path == '/browse/' %}active{% endif %}">
+            <i class="bi bi-house"></i> หน้าหลัก
+        </a>
+        <a href="/browse/tours/" class="nav-link {% if '/browse/tours' in request.path %}active{% endif %}">
+            <i class="bi bi-map"></i> แพ็กเกจทัวร์
+        </a>
+        <a href="/browse/hotels/" class="nav-link {% if '/browse/hotels' in request.path %}active{% endif %}">
+            <i class="bi bi-building"></i> โรงแรม
+        </a>
+        <a href="/browse/my-bookings/" class="nav-link {% if '/browse/my-bookings' in request.path %}active{% endif %}">
+            <i class="bi bi-journal-check"></i> การจองของฉัน
+        </a>
+    </div>
+
+    <div class="nav-right">
+        <div class="nav-user">
+            <div class="user-ava">{{ cus_name|first|upper|default:"U" }}</div>
+            <span class="user-hello">{{ cus_name|default:"ผู้ใช้งาน" }}</span>
+        </div>
+        <a href="/customer-logout/" class="nav-logout">
+            <i class="bi bi-box-arrow-right"></i> ออกจากระบบ
+        </a>
+    </div>
+</nav>
+
+<div class="main">
+    <div class="container-cus">
+        {% block content %}{% endblock %}
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

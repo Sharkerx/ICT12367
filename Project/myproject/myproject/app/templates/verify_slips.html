@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="page-header d-flex justify-content-between align-items-start">
+    <div>
+        <h2>ตรวจสอบสลิปการโอนเงิน</h2>
+        <p>รายการรอการยืนยันจาก Admin</p>
+    </div>
+</div>
+
+{% if pending_payments %}
+<div class="row g-4">
+{% for p in pending_payments %}
+<div class="col-md-6">
+    <div class="card" style="padding:0;overflow:hidden;border:1px solid #eaecf0;">
+
+        <!-- Header -->
+        <div style="background:linear-gradient(135deg,#fef9c3,#fde68a);padding:16px 20px;
+                    display:flex;justify-content:space-between;align-items:center;">
+            <div>
+                <div style="font-size:10px;color:#854d0e;letter-spacing:1px;text-transform:uppercase;margin-bottom:3px;">รอยืนยัน</div>
+                <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#0a1628;">
+                    #{{ p.booking_id|stringformat:"05d" }}
+                </div>
+            </div>
+            <span style="background:#fff;color:#854d0e;border:1px solid #fbbf24;
+                         padding:5px 14px;border-radius:20px;font-size:12px;font-weight:600;">
+                ⏳ Pending
+            </span>
+        </div>
+
+        <div style="padding:20px;">
+            <!-- ข้อมูลลูกค้า -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
+                <div>
+                    <div style="font-size:10px;color:#8892a4;text-transform:uppercase;margin-bottom:3px;">ลูกค้า</div>
+                    <div style="font-weight:600;color:#0a1628;font-size:13px;">{{ p.cus_name }}</div>
+                </div>
+                <div>
+                    <div style="font-size:10px;color:#8892a4;text-transform:uppercase;margin-bottom:3px;">ทัวร์</div>
+                    <div style="font-weight:600;color:#0a1628;font-size:13px;">{{ p.tour_name }}</div>
+                </div>
+                <div>
+                    <div style="font-size:10px;color:#8892a4;text-transform:uppercase;margin-bottom:3px;">วิธีชำระ</div>
+                    <div style="font-weight:600;color:#0a1628;font-size:13px;">{{ p.method }}</div>
+                </div>
+                <div>
+                    <div style="font-size:10px;color:#8892a4;text-transform:uppercase;margin-bottom:3px;">ยอดชำระ</div>
+                    <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#c9a84c;">฿{{ p.amount }}</div>
+                </div>
+            </div>
+
+            <!-- สลิป -->
+            {% if p.slip_path %}
+            <div style="margin-bottom:16px;">
+                <div style="font-size:10px;color:#8892a4;text-transform:uppercase;margin-bottom:8px;">สลิปที่อัปโหลด</div>
+                <a href="/media/{{ p.slip_path }}" target="_blank">
+                    <img src="/media/{{ p.slip_path }}" alt="สลิป"
+                         style="width:100%;max-height:220px;object-fit:cover;border-radius:10px;border:1px solid #eaecf0;cursor:pointer;"
+                         onerror="this.style.display='none'">
+                </a>
+                <div style="font-size:11px;color:#8892a4;margin-top:4px;">คลิกเพื่อดูขนาดเต็ม</div>
+            </div>
+            {% else %}
+            <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:10px;padding:12px;margin-bottom:16px;text-align:center;color:#dc2626;font-size:13px;">
+                <i class="bi bi-exclamation-triangle"></i> ไม่พบสลิปที่อัปโหลด
+            </div>
+            {% endif %}
+
+            <!-- ปุ่ม -->
+            <div style="display:flex;gap:10px;">
+                <a href="/admin/verify-payment/{{ p.payment_id }}/"
+                   style="flex:1;background:linear-gradient(135deg,#059669,#10b981);color:#fff;border:none;
+                          padding:11px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;
+                          text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:6px;">
+                    <i class="bi bi-check-circle"></i> ยืนยันสลิป
+                </a>
+                <a href="/admin/reject-payment/{{ p.payment_id }}/"
+                   onclick="return confirm('ปฏิเสธการชำระเงินนี้ใช่หรือไม่?')"
+                   style="background:#fef2f2;color:#dc2626;border:1px solid #fecaca;
+                          padding:11px 16px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;
+                          text-decoration:none;display:flex;align-items:center;gap:6px;">
+                    <i class="bi bi-x-circle"></i> ปฏิเสธ
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+</div>
+
+{% else %}
+<div style="text-align:center;padding:80px;color:#8892a4;">
+    <div style="font-size:48px;margin-bottom:16px;">✅</div>
+    <div style="font-size:16px;font-weight:600;color:#0a1628;margin-bottom:8px;">ไม่มีรายการรอยืนยัน</div>
+    <div style="font-size:13px;">ยอดเยี่ยม! ทุกการชำระเงินได้รับการยืนยันแล้ว</div>
+</div>
+{% endif %}
+
+{% endblock %}
