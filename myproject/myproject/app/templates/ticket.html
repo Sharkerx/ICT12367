@@ -1,0 +1,145 @@
+    {% extends 'customer_base.html' %}
+    {% block content %}
+
+    <!-- ปุ่มปริ้น (ซ่อนตอนพิมพ์) -->
+    <div class="no-print" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">
+        <div>
+            <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:6px;">การจองสำเร็จ</div>
+            <h1 style="font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:600;color:#fff;margin:0;">ตั๋วยืนยันการจอง</h1>
+        </div>
+        <div style="display:flex;gap:10px;">
+            <button onclick="window.print()" class="btn-gold" style="font-size:13px;padding:11px 24px;">
+                <i class="bi bi-printer"></i> พิมพ์ตั๋ว
+            </button>
+            <a href="/browse/my-bookings/" class="btn-outline-gold" style="font-size:13px;padding:11px 20px;">
+                <i class="bi bi-journal-check"></i> การจองของฉัน
+            </a>
+        </div>
+    </div>
+
+    <!-- ตั๋ว -->
+    <div id="ticket-print" style="max-width:780px;margin:0 auto;">
+
+        <!-- Header -->
+        <div style="background:linear-gradient(135deg,#0c0f14,#1a3a6e);border-radius:20px 20px 0 0;padding:32px 40px;position:relative;overflow:hidden;">
+            <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#c9a84c,transparent);"></div>
+            <div style="position:absolute;top:-60px;right:-60px;width:200px;height:200px;background:radial-gradient(circle,rgba(201,168,76,0.06),transparent 70%);"></div>
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+                <div style="display:flex;align-items:center;gap:14px;">
+                    <div style="width:52px;height:52px;background:rgba(201,168,76,0.15);border:1px solid rgba(201,168,76,0.3);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;">✈️</div>
+                    <div>
+                        <div style="font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600;color:#fff;letter-spacing:0.5px;">TravelPro</div>
+                        <div style="font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:rgba(201,168,76,0.7);">Premium Travel</div>
+                    </div>
+                </div>
+                <div style="text-align:right;">
+                    <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:4px;">Booking Reference</div>
+                    <div style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;color:#e8c97a;letter-spacing:2px;">#{{ ticket.booking_id|stringformat:"05d" }}</div>
+                </div>
+            </div>
+
+            <div style="margin-top:28px;padding-top:24px;border-top:1px solid rgba(255,255,255,0.08);">
+                <div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.35);margin-bottom:8px;">ชื่อแพ็กเกจทัวร์</div>
+                <div style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;color:#fff;line-height:1.2;">{{ ticket.tour_name }}</div>
+            </div>
+        </div>
+
+        <!-- Ticket body — torn edge effect -->
+        <div style="background:#141921;border-left:1px solid rgba(255,255,255,0.06);border-right:1px solid rgba(255,255,255,0.06);padding:0 40px;">
+            <div style="border-top:2px dashed rgba(255,255,255,0.1);padding-top:28px;padding-bottom:28px;">
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;">
+
+                    <div>
+                        <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(232,228,220,0.35);margin-bottom:6px;">ผู้โดยสาร</div>
+                        <div style="font-size:15px;font-weight:500;color:#fff;">{{ ticket.cus_name }}</div>
+                        <div style="font-size:12px;color:rgba(232,228,220,0.45);margin-top:3px;">{{ ticket.phone }}</div>
+                    </div>
+
+                    <div>
+                        <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(232,228,220,0.35);margin-bottom:6px;">วันเดินทาง</div>
+                        <div style="font-size:15px;font-weight:500;color:#e8c97a;">{{ ticket.start }}</div>
+                        <div style="font-size:12px;color:rgba(232,228,220,0.45);margin-top:3px;">ถึง {{ ticket.end }}</div>
+                    </div>
+
+                    <div>
+                        <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(232,228,220,0.35);margin-bottom:6px;">ระยะเวลา</div>
+                        <div style="font-size:15px;font-weight:500;color:#fff;">{{ ticket.nights }} คืน</div>
+                        <div style="font-size:12px;color:rgba(232,228,220,0.45);margin-top:3px;">{{ ticket.nights|add:1 }} วัน</div>
+                    </div>
+
+                    <div>
+                        <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(232,228,220,0.35);margin-bottom:6px;">ที่พัก</div>
+                        <div style="font-size:14px;font-weight:500;color:#fff;">{{ ticket.hotel_name }}</div>
+                    </div>
+
+                    <div>
+                        <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(232,228,220,0.35);margin-bottom:6px;">ไกด์นำเที่ยว</div>
+                        <div style="font-size:14px;font-weight:500;color:#fff;">{{ ticket.guide_name }}</div>
+                        {% if ticket.province != '-' %}
+                        <div style="font-size:11px;color:rgba(201,168,76,0.6);margin-top:3px;">ประจำ{{ ticket.province }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div>
+                        <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(232,228,220,0.35);margin-bottom:6px;">อีเมล</div>
+                        <div style="font-size:13px;color:rgba(232,228,220,0.7);">{{ ticket.email }}</div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Divider -->
+            <div style="border-top:2px dashed rgba(255,255,255,0.1);padding:24px 0;display:flex;justify-content:space-between;align-items:center;">
+                <div>
+                    <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(232,228,220,0.35);margin-bottom:6px;">วิธีชำระเงิน</div>
+                    <div style="font-size:14px;font-weight:500;color:#fff;">{{ ticket.method }}</div>
+                    {% if ticket.payment_date %}
+                    <div style="font-size:11px;color:rgba(232,228,220,0.4);margin-top:3px;">{{ ticket.payment_date }}</div>
+                    {% endif %}
+                </div>
+                <div style="text-align:center;">
+                    <span style="background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.25);color:#34d399;font-size:12px;font-weight:500;padding:6px 20px;border-radius:30px;display:inline-flex;align-items:center;gap:7px;">
+                        <span style="width:7px;height:7px;background:#34d399;border-radius:50%;box-shadow:0 0 6px #34d399;"></span>
+                        ชำระเงินสำเร็จ
+                    </span>
+                </div>
+                <div style="text-align:right;">
+                    <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(232,228,220,0.35);margin-bottom:6px;">ยอดชำระ</div>
+                    <div style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;color:#e8c97a;">฿{{ ticket.amount }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div style="background:#0c0f14;border:1px solid rgba(255,255,255,0.06);border-top:none;border-radius:0 0 20px 20px;padding:20px 40px;display:flex;justify-content:space-between;align-items:center;">
+            <div style="font-size:11px;color:rgba(232,228,220,0.3);">
+                <i class="bi bi-shield-check" style="color:rgba(201,168,76,0.5);margin-right:6px;"></i>
+                ตั๋วอิเล็กทรอนิกส์ฉบับนี้ใช้แทนเอกสารต้นฉบับได้
+            </div>
+            <div style="font-size:11px;color:rgba(232,228,220,0.3);">
+                Line: @TravelPro &nbsp;|&nbsp; โทร: 02-XXX-XXXX
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Print CSS -->
+    <style>
+    @media print {
+        .no-print, nav, .topnav { display: none !important; }
+        .main { padding-top: 0 !important; }
+        body { background: #fff !important; }
+        #ticket-print {
+            max-width: 100% !important;
+            color-adjust: exact;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+        @page {
+            size: A4;
+            margin: 15mm;
+        }
+    }
+    </style>
+
+    {% endblock %}

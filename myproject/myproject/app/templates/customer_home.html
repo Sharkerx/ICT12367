@@ -1,0 +1,115 @@
+{% extends 'customer_base.html' %}
+{% block content %}
+
+<!-- HERO -->
+<div style="position:relative;border-radius:24px;overflow:hidden;margin-bottom:40px;min-height:420px;display:flex;align-items:flex-end;">
+    <div style="position:absolute;inset:0;background:linear-gradient(135deg,#060a10 0%,#0e1a2e 50%,#0c1420 100%);"></div>
+    <!-- decorative orbs -->
+    <div style="position:absolute;top:-80px;right:-80px;width:400px;height:400px;background:radial-gradient(circle,rgba(201,168,76,0.08) 0%,transparent 70%);pointer-events:none;"></div>
+    <div style="position:absolute;bottom:-60px;left:200px;width:300px;height:300px;background:radial-gradient(circle,rgba(26,58,110,0.2) 0%,transparent 70%);pointer-events:none;"></div>
+    <!-- grid pattern -->
+    <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(201,168,76,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(201,168,76,0.03) 1px,transparent 1px);background-size:50px 50px;pointer-events:none;"></div>
+
+    <div style="position:relative;z-index:1;padding:52px 56px;width:100%;">
+        <!-- badge -->
+        <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.25);color:#e8c97a;font-size:11px;font-weight:500;letter-spacing:2px;text-transform:uppercase;padding:7px 16px;border-radius:30px;margin-bottom:24px;">
+            <span style="width:5px;height:5px;background:#c9a84c;border-radius:50%;box-shadow:0 0 6px #c9a84c;"></span>
+            ยินดีต้อนรับ, {{ cus_name }}
+        </div>
+
+        <h1 style="font-family:'Cormorant Garamond',serif;font-size:52px;font-weight:300;color:#fff;line-height:1.1;margin-bottom:16px;letter-spacing:-1px;">
+            ค้นพบการเดินทาง<br>
+            <em style="color:#e8c97a;font-style:italic;font-weight:400;">ที่ไม่มีวันลืม</em>
+        </h1>
+        <p style="font-size:15px;color:rgba(232,228,220,0.55);line-height:1.7;max-width:480px;margin-bottom:36px;">
+            แพ็กเกจทัวร์พรีเมียมคัดสรรเป็นพิเศษ ไกด์มืออาชีพ ที่พักระดับ 5 ดาว
+        </p>
+
+        <div style="display:flex;gap:14px;flex-wrap:wrap;">
+            <a href="/browse/tours/" class="btn-gold" style="font-size:14px;padding:13px 32px;">
+                <i class="bi bi-map"></i> ดูแพ็กเกจทัวร์
+            </a>
+            <a href="/browse/my-bookings/" class="btn-outline-gold" style="padding:13px 28px;font-size:14px;">
+                <i class="bi bi-journal-check"></i> การจองของฉัน
+            </a>
+        </div>
+    </div>
+
+    <!-- stats strip -->
+    <div style="position:absolute;bottom:0;right:0;display:flex;gap:0;border-left:1px solid rgba(255,255,255,0.06);border-top:1px solid rgba(255,255,255,0.06);border-radius:16px 0 0 0;overflow:hidden;">
+        {% for label, val in  forloop_dummy|default:"" %}{% endfor %}
+        <div style="padding:20px 28px;background:rgba(255,255,255,0.04);border-right:1px solid rgba(255,255,255,0.06);text-align:center;">
+            <div style="font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600;color:#e8c97a;">{{ tours|length }}+</div>
+            <div style="font-size:11px;letter-spacing:1px;text-transform:uppercase;color:rgba(232,228,220,0.4);margin-top:3px;">ทัวร์</div>
+        </div>
+        <div style="padding:20px 28px;background:rgba(255,255,255,0.04);border-right:1px solid rgba(255,255,255,0.06);text-align:center;">
+            <div style="font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600;color:#e8c97a;">98%</div>
+            <div style="font-size:11px;letter-spacing:1px;text-transform:uppercase;color:rgba(232,228,220,0.4);margin-top:3px;">พึงพอใจ</div>
+        </div>
+        <div style="padding:20px 28px;background:rgba(255,255,255,0.04);text-align:center;">
+            <div style="font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600;color:#e8c97a;">500+</div>
+            <div style="font-size:11px;letter-spacing:1px;text-transform:uppercase;color:rgba(232,228,220,0.4);margin-top:3px;">จุดหมาย</div>
+        </div>
+    </div>
+</div>
+
+<!-- FEATURED TOURS -->
+<div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:24px;">
+    <div>
+        <div style="font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold);margin-bottom:8px;">แนะนำพิเศษ</div>
+        <h2 style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;color:#fff;letter-spacing:-0.3px;">แพ็กเกจยอดนิยม</h2>
+    </div>
+    <a href="/browse/tours/" style="font-size:12.5px;color:var(--gold);text-decoration:none;display:flex;align-items:center;gap:5px;letter-spacing:0.3px;opacity:0.8;transition:0.2s;"
+       onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.8'">
+        ดูทั้งหมด <i class="bi bi-arrow-right"></i>
+    </a>
+</div>
+
+<div class="row g-3">
+{% for t in tours %}
+<div class="col-md-4">
+    <div style="background:var(--ink2);border-radius:18px;overflow:hidden;border:1px solid rgba(255,255,255,0.06);transition:all 0.3s;cursor:pointer;position:relative;"
+         onmouseenter="this.style.transform='translateY(-6px)';this.style.borderColor='rgba(201,168,76,0.2)';this.style.boxShadow='0 20px 50px rgba(0,0,0,0.4)'"
+         onmouseleave="this.style.transform='';this.style.borderColor='rgba(255,255,255,0.06)';this.style.boxShadow=''">
+        <div style="height:195px;overflow:hidden;position:relative;">
+            <img src="{{ t.image }}" alt="{{ t.tour_name }}"
+                 style="width:100%;height:100%;object-fit:cover;transition:transform 0.5s;"
+                 onmouseenter="this.style.transform='scale(1.06)'"
+                 onmouseleave="this.style.transform='scale(1)'"
+                 onerror="this.src='https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&auto=format&fit=crop'">
+            <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(12,15,20,0.8) 0%,transparent 55%);"></div>
+            <div style="position:absolute;top:14px;left:14px;background:rgba(201,168,76,0.9);color:#0c0f14;font-size:9.5px;font-weight:700;padding:4px 12px;border-radius:20px;letter-spacing:1.2px;text-transform:uppercase;">Featured</div>
+            <div style="position:absolute;bottom:14px;left:14px;font-size:12px;color:rgba(255,255,255,0.7);display:flex;align-items:center;gap:5px;">
+                <i class="bi bi-geo-alt-fill" style="color:#e8c97a;font-size:11px;"></i> Thailand
+            </div>
+        </div>
+        <div style="padding:18px 20px 20px;">
+            <div style="font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:600;color:#fff;margin-bottom:10px;line-height:1.35;">{{ t.tour_name }}</div>
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;font-size:12px;color:rgba(232,228,220,0.45);">
+                <span><i class="bi bi-star-fill" style="color:#c9a84c;font-size:10px;"></i> 4.8</span>
+                <span style="width:3px;height:3px;background:rgba(255,255,255,0.2);border-radius:50%;"></span>
+                <span>พร้อมจอง</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding-top:14px;border-top:1px solid rgba(255,255,255,0.06);">
+                <div>
+                    <div style="font-size:10px;color:rgba(232,228,220,0.35);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:3px;">เริ่มต้น</div>
+                    <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:#e8c97a;">฿{{ t.price }}</div>
+                </div>
+                <a href="/browse/tours/" class="btn-gold" style="font-size:12px;padding:8px 18px;">
+                    <i class="bi bi-calendar-plus"></i> จองเลย
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% empty %}
+<div class="col-12">
+    <div class="card-cus" style="text-align:center;padding:60px;color:var(--muted);">
+        <div style="font-size:40px;margin-bottom:12px;opacity:0.3;">✈️</div>
+        ยังไม่มีแพ็กเกจทัวร์
+    </div>
+</div>
+{% endfor %}
+</div>
+
+{% endblock %}

@@ -1,0 +1,279 @@
+{% extends 'customer_base.html' %}
+{% block content %}
+
+<div class="page-hero">
+    <h1>ชำระเงิน</h1>
+    <p>ยืนยันการจองและเลือกวิธีการชำระเงิน</p>
+</div>
+
+{% if error %}
+<div style="background:#fef2f2;border:1px solid #fecaca;border-radius:12px;padding:14px 18px;
+            color:#dc2626;margin-bottom:24px;display:flex;align-items:center;gap:10px;font-size:13.5px;">
+    <i class="bi bi-exclamation-circle-fill"></i> {{ error }}
+</div>
+{% endif %}
+
+{% if data %}
+<form method="POST" action="/browse/confirm-payment/" enctype="multipart/form-data">
+    {% csrf_token %}
+    <input type="hidden" name="cus_id"      value="{{ data.cus_id }}">
+    <input type="hidden" name="schedule_id" value="{{ data.schedule_id }}">
+    <input type="hidden" name="emp_id"      value="{{ data.emp_id }}">
+
+    <div class="row g-4">
+        <!-- LEFT -->
+        <div class="col-md-7">
+            <!-- Booking Summary -->
+            <div class="card-cus mb-4">
+                <div style="display:flex;align-items:center;gap:14px;margin-bottom:22px;padding-bottom:18px;border-bottom:1px solid #f4f6f9;">
+                    <div style="width:52px;height:52px;background:linear-gradient(135deg,#0a1628,#1a3a6e);border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:24px;">🗺️</div>
+                    <div>
+                        <div style="font-size:11px;color:#8892a4;letter-spacing:0.8px;text-transform:uppercase;margin-bottom:4px;">Tour Package</div>
+                        <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#0a1628;">{{ data.tour_name }}</div>
+                    </div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                    <div style="background:#f8fafc;border-radius:11px;padding:15px;">
+                        <div style="font-size:11px;color:#8892a4;text-transform:uppercase;margin-bottom:6px;">👤 ลูกค้า</div>
+                        <div style="font-weight:600;color:#0a1628;font-size:14px;">{{ data.cus_name }}</div>
+                    </div>
+                    <div style="background:linear-gradient(135deg,rgba(201,168,76,0.08),rgba(232,201,122,0.08));border:1px solid rgba(201,168,76,0.2);border-radius:11px;padding:15px;">
+                        <div style="font-size:11px;color:#8892a4;text-transform:uppercase;margin-bottom:6px;">💰 ราคารวม VAT</div>
+                        <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:#c9a84c;">฿{{ data.price_vat }}</div>
+                    </div>
+                    <div style="background:#f8fafc;border-radius:11px;padding:15px;">
+                        <div style="font-size:11px;color:#8892a4;text-transform:uppercase;margin-bottom:6px;">📅 วันเริ่มต้น</div>
+                        <div style="font-weight:600;color:#0a1628;font-size:14px;">{{ data.start }}</div>
+                    </div>
+                    <div style="background:#f8fafc;border-radius:11px;padding:15px;">
+                        <div style="font-size:11px;color:#8892a4;text-transform:uppercase;margin-bottom:6px;">📅 วันสิ้นสุด</div>
+                        <div style="font-weight:600;color:#0a1628;font-size:14px;">{{ data.end }}</div>
+                    </div>
+                    {% if data.hotel_name and data.hotel_name != '-' %}
+                    <div style="background:#eff6ff;border-radius:11px;padding:15px;grid-column:span 2;">
+                        <div style="font-size:11px;color:#8892a4;text-transform:uppercase;margin-bottom:6px;">🏨 ที่พัก</div>
+                        <div style="font-weight:600;color:#0a1628;font-size:14px;">{{ data.hotel_name }}</div>
+                    </div>
+                    {% endif %}
+                    {% if data.guide_name and data.guide_name != '-' %}
+                    <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:11px;padding:15px;grid-column:span 2;">
+                        <div style="font-size:11px;color:#059669;text-transform:uppercase;margin-bottom:6px;">🚩 ไกด์นำเที่ยว (จัดให้อัตโนมัติ)</div>
+                        <div style="font-weight:600;color:#0a1628;font-size:14px;">{{ data.guide_name }}</div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Payment Method -->
+            <div class="card-cus">
+                <div style="font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:#0a1628;margin-bottom:18px;">เลือกวิธีชำระเงิน</div>
+                <div style="display:flex;flex-direction:column;gap:10px;">
+
+                    <!-- โอนเงิน -->
+                    <label id="lbl-transfer" style="display:flex;align-items:center;gap:14px;padding:16px;border:2px solid #c9a84c;border-radius:12px;cursor:pointer;background:rgba(201,168,76,0.04);">
+                        <input type="radio" name="method" value="โอนเงิน" checked style="accent-color:#c9a84c;" onchange="selectMethod('lbl-transfer')">
+                        <div style="width:40px;height:40px;background:#fff8e8;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;">🏦</div>
+                        <div>
+                            <div style="font-weight:600;font-size:14px;color:#0a1628;">โอนเงิน</div>
+                            <div style="font-size:12px;color:#8892a4;">โอนผ่านธนาคาร / พร้อมเพย์</div>
+                        </div>
+                        <i class="bi bi-check-circle-fill" style="margin-left:auto;color:#c9a84c;font-size:18px;"></i>
+                    </label>
+
+                    <!-- กล่อง QR + บัญชีกสิกร + อัปโหลดสลิป -->
+                    <div id="kasikorn-box" style="border-radius:16px;overflow:hidden;margin-top:-6px;">
+                        <div style="background:linear-gradient(135deg,#1b5e20,#2e7d32);padding:14px 20px;display:flex;align-items:center;gap:12px;">
+                            <div style="width:40px;height:40px;background:#fff;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;">🏧</div>
+                            <div>
+                                <div style="font-size:10px;color:rgba(255,255,255,0.7);letter-spacing:1px;text-transform:uppercase;">ธนาคารกสิกรไทย</div>
+                                <div style="font-size:15px;font-weight:700;color:#fff;">KASIKORN BANK</div>
+                            </div>
+                        </div>
+
+                        <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-top:none;padding:20px;">
+                            <div class="row g-3 mb-3">
+                                <!-- QR PromptPay จาก promptpay.io -->
+                                <div class="col-5 text-center">
+                                    <div style="font-size:11px;color:#166534;font-weight:600;margin-bottom:8px;">📱 สแกน QR PromptPay</div>
+                                    <img src="https://promptpay.io/0812345678/{{ data.price_vat }}.png"
+                                         alt="QR PromptPay"
+                                         style="width:150px;height:150px;border-radius:10px;border:3px solid #166534;background:#fff;padding:4px;"
+                                         onerror="this.src='https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=PromptPay:0812345678:{{ data.price_vat }}'">
+                                    <div style="font-size:10px;color:#6b7280;margin-top:6px;">สแกนด้วยแอปธนาคารได้เลย</div>
+                                </div>
+
+                                <!-- เลขบัญชี -->
+                                <div class="col-7">
+                                    <div style="background:#fff;border-radius:12px;padding:14px;border:1px solid #bbf7d0;">
+                                        <div style="font-size:10px;color:#6b7280;margin-bottom:4px;">เลขที่บัญชี</div>
+                                        <div id="acc-number" style="font-size:20px;font-weight:700;color:#166534;letter-spacing:2px;">079-2-12345-6</div>
+                                        <div style="font-size:11px;color:#6b7280;margin-top:3px;">ชื่อบัญชี: บริษัท ทราเวลโปร จำกัด</div>
+                                        <div style="font-size:11px;color:#6b7280;">พร้อมเพย์: 081-234-5678</div>
+                                        <button type="button" onclick="copyAcc()"
+                                                style="margin-top:8px;background:#166534;color:#fff;border:none;padding:6px 14px;border-radius:8px;font-size:11px;cursor:pointer;">
+                                            <i class="bi bi-clipboard"></i> คัดลอก
+                                        </button>
+                                        <span id="copy-msg" style="font-size:11px;color:#166534;display:none;margin-left:6px;">✓ คัดลอกแล้ว!</span>
+                                    </div>
+                                    <div style="background:linear-gradient(135deg,rgba(201,168,76,0.1),rgba(232,201,122,0.1));border:1px solid rgba(201,168,76,0.3);border-radius:10px;padding:12px;margin-top:8px;text-align:center;">
+                                        <div style="font-size:10px;color:#8892a4;text-transform:uppercase;margin-bottom:2px;">ยอดที่ต้องโอน</div>
+                                        <div style="font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:#c9a84c;">฿{{ data.price_vat }}</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- อัปโหลดสลิป -->
+                            <div style="padding-top:16px;border-top:1px solid #bbf7d0;">
+                                <div style="font-weight:600;color:#166534;margin-bottom:10px;font-size:14px;">
+                                    📎 อัปโหลดสลิปการโอนเงิน <span style="color:#dc2626;font-size:12px;">* จำเป็น</span>
+                                </div>
+
+                                <!-- Drop zone -->
+                                <div id="slip-drop"
+                                     onclick="document.getElementById('slip-input').click()"
+                                     ondragover="event.preventDefault();this.style.borderColor='#166534';this.style.background='#dcfce7'"
+                                     ondragleave="this.style.borderColor='#86efac';this.style.background='#fff'"
+                                     ondrop="handleDrop(event)"
+                                     style="border:2px dashed #86efac;border-radius:12px;padding:22px;text-align:center;cursor:pointer;background:#fff;transition:0.2s;">
+                                    <div style="font-size:28px;margin-bottom:6px;">🖼️</div>
+                                    <div style="font-size:13px;color:#166534;font-weight:600;">คลิกหรือลากไฟล์มาวางที่นี่</div>
+                                    <div style="font-size:11px;color:#6b7280;margin-top:3px;">JPG, PNG, PDF — ขนาดไม่เกิน 5MB</div>
+                                    <input type="file" name="slip_file" id="slip-input" accept="image/*,.pdf" style="display:none" onchange="previewSlip(this)">
+                                </div>
+
+                                <!-- Preview สลิป -->
+                                <div id="slip-preview" style="display:none;margin-top:10px;text-align:center;">
+                                    <img id="slip-img" style="max-height:180px;border-radius:10px;border:2px solid #bbf7d0;">
+                                    <div id="slip-name" style="font-size:12px;color:#6b7280;margin-top:6px;"></div>
+                                    <button type="button" onclick="clearSlip()"
+                                            style="margin-top:6px;background:#fef2f2;color:#dc2626;border:1px solid #fecaca;padding:5px 12px;border-radius:8px;font-size:11px;cursor:pointer;">
+                                        <i class="bi bi-x-circle"></i> ลบสลิป
+                                    </button>
+                                </div>
+
+                                <div style="margin-top:10px;background:#fefce8;border:1px solid #fde68a;border-radius:10px;padding:10px 14px;font-size:12px;color:#854d0e;">
+                                    <i class="bi bi-info-circle"></i>
+                                    หลังอัปโหลดสลิป ระบบจะรอ Admin ตรวจสอบก่อนยืนยัน (ภายใน 1-2 ชั่วโมง)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- บัตรเครดิต -->
+                    <label id="lbl-card" style="display:flex;align-items:center;gap:14px;padding:16px;border:1.5px solid #eaecf0;border-radius:12px;cursor:pointer;">
+                        <input type="radio" name="method" value="บัตรเครดิต" style="accent-color:#c9a84c;" onchange="selectMethod('lbl-card')">
+                        <div style="width:40px;height:40px;background:#eff6ff;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;">💳</div>
+                        <div>
+                            <div style="font-weight:600;font-size:14px;color:#0a1628;">บัตรเครดิต / เดบิต</div>
+                            <div style="font-size:12px;color:#8892a4;">Visa, Mastercard, JCB — ชำระได้ทันที</div>
+                        </div>
+                    </label>
+
+                    <!-- เงินสด -->
+                    <label id="lbl-cash" style="display:flex;align-items:center;gap:14px;padding:16px;border:1.5px solid #eaecf0;border-radius:12px;cursor:pointer;">
+                        <input type="radio" name="method" value="เงินสด" style="accent-color:#c9a84c;" onchange="selectMethod('lbl-cash')">
+                        <div style="width:40px;height:40px;background:#f0fdf4;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;">💵</div>
+                        <div>
+                            <div style="font-weight:600;font-size:14px;color:#0a1628;">เงินสด</div>
+                            <div style="font-size:12px;color:#8892a4;">ชำระที่สำนักงาน — ยืนยันทันที</div>
+                        </div>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT - Summary -->
+        <div class="col-md-5">
+            <div class="card-cus" style="position:sticky;top:90px;">
+                <div style="font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:#0a1628;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid #f4f6f9;">สรุปยอดชำระ</div>
+                <div style="display:flex;justify-content:space-between;margin-bottom:12px;font-size:13.5px;">
+                    <span style="color:#8892a4;">ราคาทัวร์</span>
+                    <span style="font-weight:500;">฿{{ data.price }}</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;margin-bottom:12px;font-size:13.5px;">
+                    <span style="color:#8892a4;">ภาษีมูลค่าเพิ่ม (7%)</span>
+                    <span style="color:#e67e22;font-weight:500;">฿{{ data.price_vat }}</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;margin-bottom:12px;font-size:13.5px;">
+                    <span style="color:#8892a4;">ค่าบริการ</span>
+                    <span style="color:#059669;font-weight:600;">ฟรี</span>
+                </div>
+                <div style="border-top:2px dashed #eaecf0;margin:18px 0;padding-top:18px;display:flex;justify-content:space-between;align-items:center;">
+                    <span style="font-weight:700;font-size:15px;">ยอดรวมทั้งหมด</span>
+                    <span style="font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:#c9a84c;">฿{{ data.price_vat }}</span>
+                </div>
+                <button type="submit" class="btn-gold" style="width:100%;padding:14px;font-size:14px;justify-content:center;border-radius:12px;">
+                    <i class="bi bi-check2-circle"></i> ยืนยันการชำระเงิน
+                </button>
+                <a href="/browse/tours/" style="display:block;text-align:center;margin-top:14px;font-size:13px;color:#8892a4;text-decoration:none;">← ยกเลิก กลับไปเลือกทัวร์</a>
+                <div style="margin-top:18px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:12px 16px;display:flex;align-items:center;gap:10px;">
+                    <i class="bi bi-shield-check" style="color:#059669;font-size:17px;"></i>
+                    <div style="font-size:12px;color:#059669;font-weight:500;">ปลอดภัย 100% — SSL Encrypted</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+{% endif %}
+
+<script>
+function selectMethod(activeId) {
+    ['lbl-transfer','lbl-card','lbl-cash'].forEach(id => {
+        const el = document.getElementById(id);
+        el.style.borderColor = id === activeId ? '#c9a84c' : '#eaecf0';
+        el.style.borderWidth = id === activeId ? '2px' : '1.5px';
+        el.style.background  = id === activeId ? 'rgba(201,168,76,0.04)' : '';
+    });
+    document.getElementById('kasikorn-box').style.display =
+        activeId === 'lbl-transfer' ? 'block' : 'none';
+}
+
+function copyAcc() {
+    navigator.clipboard.writeText('079-2-12345-6').then(() => {
+        const msg = document.getElementById('copy-msg');
+        msg.style.display = 'inline';
+        setTimeout(() => msg.style.display = 'none', 2000);
+    });
+}
+
+function previewSlip(input) {
+    const file = input.files[0];
+    if (!file) return;
+    if (file.type.startsWith('image/')) {
+        document.getElementById('slip-img').src = URL.createObjectURL(file);
+        document.getElementById('slip-img').style.display = 'block';
+    } else {
+        document.getElementById('slip-img').style.display = 'none';
+    }
+    document.getElementById('slip-name').textContent = '📄 ' + file.name;
+    document.getElementById('slip-preview').style.display = 'block';
+    document.getElementById('slip-drop').style.display = 'none';
+}
+
+function handleDrop(e) {
+    e.preventDefault();
+    e.currentTarget.style.borderColor = '#86efac';
+    e.currentTarget.style.background  = '#fff';
+    const dt = new DataTransfer();
+    dt.items.add(e.dataTransfer.files[0]);
+    const input = document.getElementById('slip-input');
+    input.files = dt.files;
+    previewSlip(input);
+}
+
+function clearSlip() {
+    document.getElementById('slip-input').value = '';
+    document.getElementById('slip-preview').style.display = 'none';
+    document.getElementById('slip-drop').style.display = 'block';
+}
+
+// Validate ก่อน submit
+document.querySelector('form').addEventListener('submit', function(e) {
+    const method = document.querySelector('input[name="method"]:checked').value;
+    if (method === 'โอนเงิน' && !document.getElementById('slip-input').files[0]) {
+        e.preventDefault();
+        alert('⚠️ กรุณาอัปโหลดสลิปการโอนเงินก่อนยืนยัน');
+    }
+});
+</script>
+{% endblock %}

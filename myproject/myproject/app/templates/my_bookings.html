@@ -1,0 +1,145 @@
+{% extends 'customer_base.html' %}
+{% block content %}
+
+<div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:36px;">
+    <div>
+        <div style="font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold);margin-bottom:8px;">บัญชีของฉัน</div>
+        <h1 style="font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:600;color:#fff;letter-spacing:-0.3px;">การจองของฉัน</h1>
+        <p style="font-size:14px;color:var(--muted);margin-top:5px;">ติดตามสถานะการจองทริปทั้งหมดของคุณ</p>
+    </div>
+    <a href="/browse/tours/" class="btn-gold">
+        <i class="bi bi-plus-lg"></i> จองทริปใหม่
+    </a>
+</div>
+
+{% if data %}
+<!-- Summary strip -->
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:36px;">
+    <div style="background:linear-gradient(135deg,#0e1a2e,#141921);border:1px solid rgba(255,255,255,0.06);border-radius:16px;padding:22px 24px;position:relative;overflow:hidden;">
+        <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(201,168,76,0.3),transparent);"></div>
+        <div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">การจองทั้งหมด</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:40px;font-weight:600;color:#fff;line-height:1;">{{ data|length }}</div>
+    </div>
+    <div style="background:linear-gradient(135deg,#0a2010,#0f2a18);border:1px solid rgba(16,185,129,0.15);border-radius:16px;padding:22px 24px;position:relative;overflow:hidden;">
+        <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(16,185,129,0.3),transparent);"></div>
+        <div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(52,211,153,0.5);margin-bottom:12px;">Confirmed</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:40px;font-weight:600;color:#34d399;line-height:1;">
+            {% with confirmed_count=0 %}
+            {% for b in data %}{% if b.status == 'Confirmed' %}{% with confirmed_count=confirmed_count|add:1 %}{% endwith %}{% endif %}{% endfor %}
+            {{ data|length }}
+            {% endwith %}
+        </div>
+    </div>
+    <div style="background:linear-gradient(135deg,#1a1205,#201608);border:1px solid rgba(201,168,76,0.15);border-radius:16px;padding:22px 24px;position:relative;overflow:hidden;">
+        <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(201,168,76,0.4),transparent);"></div>
+        <div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(201,168,76,0.5);margin-bottom:12px;">สถานะชำระเงิน</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:600;color:#e8c97a;line-height:1;">Paid</div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Bookings list -->
+<div style="background:var(--ink2);border:1px solid rgba(255,255,255,0.06);border-radius:18px;overflow:hidden;position:relative;">
+    <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(201,168,76,0.2),transparent);"></div>
+
+    <table style="width:100%;border-collapse:collapse;">
+        <thead>
+            <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+                <th style="padding:16px 20px;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:500;text-align:left;">Booking</th>
+                <th style="padding:16px 20px;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:500;text-align:left;">แพ็กเกจทัวร์</th>
+                <th style="padding:16px 20px;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:500;text-align:left;">วันเดินทาง</th>
+                <th style="padding:16px 20px;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:500;text-align:left;">ที่พัก</th>
+                <th style="padding:16px 20px;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:500;text-align:left;">ยอดชำระ</th>
+                <th style="padding:16px 20px;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:500;text-align:left;">สถานะ</th>
+                <th style="padding:16px 20px;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:500;text-align:left;"></th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for b in data %}
+        <tr style="border-bottom:1px solid rgba(255,255,255,0.04);transition:background 0.2s;"
+            onmouseenter="this.style.background='rgba(255,255,255,0.02)'"
+            onmouseleave="this.style.background=''">
+            <td style="padding:18px 20px;">
+                <span style="font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:600;color:#e8c97a;">#{{ b.booking_id }}</span>
+            </td>
+            <td style="padding:18px 20px;">
+                <div style="font-size:14px;font-weight:500;color:#fff;">{{ b.tour_name }}</div>
+            </td>
+            <td style="padding:18px 20px;">
+                <div style="font-size:13px;color:var(--muted);">{{ b.start }}</div>
+                <div style="font-size:11px;color:rgba(232,228,220,0.3);margin-top:2px;">→ {{ b.end }}</div>
+            </td>
+            <td style="padding:18px 20px;">
+                {% if b.hotel_name != '-' %}
+                <span style="background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.15);color:#e8c97a;font-size:12px;padding:4px 12px;border-radius:20px;">🏨 {{ b.hotel_name }}</span>
+                {% else %}
+                <span style="color:rgba(255,255,255,0.2);font-size:13px;">—</span>
+                {% endif %}
+            </td>
+            <td style="padding:18px 20px;">
+                {% if b.amount %}
+                <div style="font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;color:#fff;">฿{{ b.amount }}</div>
+                <div style="font-size:11px;color:var(--muted);margin-top:2px;">{{ b.method }}</div>
+                {% else %}
+                <span style="color:rgba(255,255,255,0.2);">—</span>
+                {% endif %}
+            </td>
+            <td style="padding:18px 20px;">
+                {% if b.status == 'Confirmed' %}
+                <span style="background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.2);color:#34d399;font-size:11px;font-weight:500;padding:5px 14px;border-radius:20px;display:inline-flex;align-items:center;gap:6px;">
+                    <span style="width:5px;height:5px;background:#34d399;border-radius:50%;box-shadow:0 0 5px #34d399;"></span>
+                    {{ b.status }}
+                </span>
+                {% elif b.status == 'Cancelled' %}
+                <span style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);color:#f87171;font-size:11px;font-weight:500;padding:5px 14px;border-radius:20px;display:inline-flex;align-items:center;gap:6px;">
+                    <span style="width:5px;height:5px;background:#f87171;border-radius:50%;"></span>
+                    {{ b.status }}
+                </span>
+                {% elif b.status == 'Pending' %}
+                <span style="background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.2);color:#fbbf24;font-size:11px;font-weight:500;padding:5px 14px;border-radius:20px;display:inline-flex;align-items:center;gap:6px;">
+                    <span style="width:5px;height:5px;background:#fbbf24;border-radius:50%;"></span>
+                    {{ b.status }}
+                </span>
+                {% else %}
+                <span style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:var(--muted);font-size:11px;font-weight:500;padding:5px 14px;border-radius:20px;display:inline-flex;align-items:center;gap:6px;">
+                    <span style="width:5px;height:5px;background:var(--muted);border-radius:50%;"></span>
+                    {{ b.status }}
+                </span>
+                {% endif %}
+            </td>
+            <td style="padding:18px 20px;">
+                {% if b.status == 'Confirmed' %}
+                <a href="/browse/ticket/{{ b.booking_id }}/"
+                   style="background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.25);color:#e8c97a;font-size:11px;font-weight:500;padding:6px 14px;border-radius:8px;text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:0.2s;"
+                   onmouseenter="this.style.background='rgba(201,168,76,0.18)'"
+                   onmouseleave="this.style.background='rgba(201,168,76,0.1)'">
+                    <i class="bi bi-printer" style="font-size:12px;"></i> ตั๋ว
+                </a>
+                {% elif b.status == 'Cancelled' %}
+                <span style="color:rgba(239,68,68,0.4);font-size:11px;padding:6px 14px;display:inline-flex;align-items:center;gap:6px;">
+                    <i class="bi bi-x-circle" style="font-size:12px;"></i> ยกเลิกแล้ว
+                </span>
+                {% elif b.status == 'Pending' %}
+                <span style="color:rgba(251,191,36,0.6);font-size:11px;padding:6px 14px;display:inline-flex;align-items:center;gap:6px;">
+                    <i class="bi bi-hourglass-split" style="font-size:12px;"></i> รอยืนยัน
+                </span>
+                {% else %}
+                <span style="color:rgba(255,255,255,0.2);font-size:11px;padding:6px 14px;">—</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="7" style="padding:80px 20px;text-align:center;color:var(--muted);">
+                <div style="font-size:40px;opacity:0.2;margin-bottom:16px;">✈️</div>
+                <div style="font-family:'Cormorant Garamond',serif;font-size:20px;color:rgba(255,255,255,0.4);margin-bottom:8px;">ยังไม่มีการจอง</div>
+                <div style="font-size:13px;margin-bottom:24px;">เริ่มต้นการเดินทางกับเราวันนี้</div>
+                <a href="/browse/tours/" class="btn-gold">ดูแพ็กเกจทัวร์</a>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

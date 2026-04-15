@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TravelPro — เข้าสู่ระบบ</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: 'Outfit', sans-serif;
+    min-height: 100vh;
+    background: #060f1e;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+}
+
+/* Animated background */
+.bg-orbs {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+}
+.orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    animation: orbFloat 8s ease-in-out infinite;
+}
+.orb-1 { width:500px;height:500px;background:rgba(201,168,76,0.06);top:-100px;left:-100px;animation-delay:0s; }
+.orb-2 { width:400px;height:400px;background:rgba(26,58,110,0.15);bottom:-50px;right:-80px;animation-delay:3s; }
+.orb-3 { width:300px;height:300px;background:rgba(201,168,76,0.04);top:50%;left:50%;transform:translate(-50%,-50%);animation-delay:6s; }
+
+@keyframes orbFloat {
+    0%,100% { transform: translate(0,0) scale(1); }
+    50% { transform: translate(20px,-20px) scale(1.05); }
+}
+
+/* Grid lines */
+.grid-lines {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background-image:
+        linear-gradient(rgba(201,168,76,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(201,168,76,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+}
+
+.wrapper {
+    position: relative; z-index: 10;
+    width: 100%; max-width: 960px;
+    padding: 24px;
+}
+
+/* Header */
+.brand-header {
+    text-align: center;
+    margin-bottom: 52px;
+    animation: fadeDown 0.7s ease both;
+}
+
+.brand-logo-wrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 16px;
+}
+
+.brand-icon-lg {
+    width: 56px; height: 56px;
+    background: linear-gradient(135deg, #c9a84c, #e8c97a);
+    border-radius: 16px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px;
+    box-shadow: 0 8px 32px rgba(201,168,76,0.35);
+}
+
+.brand-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 36px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.5px;
+}
+
+.brand-title span { color: #c9a84c; }
+
+.brand-sub {
+    font-size: 14px;
+    color: rgba(255,255,255,0.4);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-top: 4px;
+}
+
+/* Cards container */
+.cards-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+/* Portal card */
+.portal-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 24px;
+    padding: 40px 36px;
+    cursor: pointer;
+    transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
+    text-decoration: none;
+    display: block;
+    position: relative;
+    overflow: hidden;
+    animation: fadeUp 0.6s ease both;
+}
+
+.portal-card::before {
+    content: '';
+    position: absolute; inset: 0;
+    opacity: 0;
+    transition: opacity 0.35s;
+    border-radius: 24px;
+}
+
+.portal-card.customer::before {
+    background: linear-gradient(135deg, rgba(201,168,76,0.08), rgba(232,201,122,0.04));
+}
+.portal-card.admin::before {
+    background: linear-gradient(135deg, rgba(26,58,110,0.2), rgba(10,22,40,0.1));
+}
+
+.portal-card:hover { 
+    transform: translateY(-6px);
+    border-color: rgba(255,255,255,0.15);
+}
+.portal-card:hover::before { opacity: 1; }
+.portal-card.customer:hover { border-color: rgba(201,168,76,0.4); box-shadow: 0 20px 60px rgba(201,168,76,0.12); }
+.portal-card.admin:hover { border-color: rgba(26,58,110,0.6); box-shadow: 0 20px 60px rgba(26,58,110,0.25); }
+
+.portal-card:nth-child(2) { animation-delay: 0.1s; }
+
+/* Icon area */
+.card-icon-area {
+    margin-bottom: 28px;
+}
+.card-icon-bg {
+    width: 72px; height: 72px;
+    border-radius: 20px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 32px;
+    position: relative;
+}
+.customer .card-icon-bg {
+    background: linear-gradient(135deg, #c9a84c, #e8c97a);
+    box-shadow: 0 8px 32px rgba(201,168,76,0.3);
+}
+.admin .card-icon-bg {
+    background: linear-gradient(135deg, #0a1628, #1a3a6e);
+    border: 1px solid rgba(201,168,76,0.3);
+    box-shadow: 0 8px 32px rgba(10,22,40,0.4);
+}
+
+/* Text */
+.card-tag {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+}
+.customer .card-tag { color: #c9a84c; }
+.admin .card-tag { color: rgba(255,255,255,0.4); }
+
+.card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 12px;
+    line-height: 1.2;
+}
+
+.card-desc {
+    font-size: 13.5px;
+    color: rgba(255,255,255,0.45);
+    line-height: 1.7;
+    margin-bottom: 32px;
+}
+
+/* Features list */
+.feature-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 36px;
+}
+.feature-list li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.6);
+}
+.feature-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+.customer .feature-dot { background: #c9a84c; }
+.admin .feature-dot { background: #3b82f6; }
+
+/* CTA Button */
+.card-cta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    transition: 0.2s;
+}
+.customer .card-cta {
+    background: linear-gradient(135deg, #c9a84c, #e8c97a);
+    color: #0a1628;
+}
+.admin .card-cta {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: rgba(255,255,255,0.8);
+}
+
+.portal-card:hover .card-cta i { transform: translateX(4px); }
+.card-cta i { transition: transform 0.2s; font-size: 16px; }
+
+/* Divider */
+.or-divider {
+    display: flex; align-items: center; gap: 16px;
+    position: relative;
+}
+.or-divider::before {
+    content: '';
+    position: absolute;
+    top: 50%; left: 0; right: 0;
+    height: 1px;
+    background: rgba(255,255,255,0.06);
+}
+
+/* Bottom note */
+.bottom-note {
+    text-align: center;
+    margin-top: 36px;
+    font-size: 12px;
+    color: rgba(255,255,255,0.2);
+    animation: fadeUp 0.6s ease 0.3s both;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+.bottom-note span { display: flex; align-items: center; gap: 6px; }
+.bottom-note i { color: rgba(201,168,76,0.5); }
+
+/* Badge on admin card */
+.admin-badge {
+    position: absolute;
+    top: 20px; right: 20px;
+    background: rgba(239,68,68,0.1);
+    border: 1px solid rgba(239,68,68,0.2);
+    color: #ef4444;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 20px;
+}
+
+@keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 640px) {
+    .cards-row { grid-template-columns: 1fr; }
+    .brand-title { font-size: 28px; }
+    .card-title { font-size: 22px; }
+}
+</style>
+</head>
+<body>
+
+<div class="bg-orbs">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+</div>
+<div class="grid-lines"></div>
+
+<div class="wrapper">
+    <!-- Brand Header -->
+    <div class="brand-header">
+        <div class="brand-logo-wrap">
+            <div class="brand-icon-lg">✈️</div>
+            <div>
+                <div class="brand-title">Travel<span>Pro</span></div>
+            </div>
+        </div>
+        <div class="brand-sub">Premium Travel Management System</div>
+    </div>
+
+    <!-- Portal Cards -->
+    <div class="cards-row">
+        <!-- Customer Portal -->
+        <a href="/customer-login/" class="portal-card customer">
+            <div class="card-icon-area">
+                <div class="card-icon-bg">🌏</div>
+            </div>
+            <div class="card-tag">สำหรับนักท่องเที่ยว</div>
+            <div class="card-title">Customer<br>Portal</div>
+            <div class="card-desc">ค้นหาแพ็กเกจทัวร์ จองทริปในฝัน และจัดการการจองของคุณได้ในที่เดียว</div>
+            <ul class="feature-list">
+                <li><span class="feature-dot"></span>ดูและจองแพ็กเกจทัวร์</li>
+                <li><span class="feature-dot"></span>เลือกโรงแรมที่พัก</li>
+                <li><span class="feature-dot"></span>ชำระเงินออนไลน์</li>
+                <li><span class="feature-dot"></span>ติดตามสถานะการจอง</li>
+            </ul>
+            <div class="card-cta">
+                <span>เข้าสู่ระบบ / สมัครสมาชิก</span>
+                <i class="bi bi-arrow-right"></i>
+            </div>
+        </a>
+
+        <!-- Admin Portal -->
+        <a href="/login/" class="portal-card admin">
+            <div class="admin-badge">Staff Only</div>
+            <div class="card-icon-area">
+                <div class="card-icon-bg">🛡️</div>
+            </div>
+            <div class="card-tag">สำหรับเจ้าหน้าที่</div>
+            <div class="card-title">Admin<br>Dashboard</div>
+            <div class="card-desc">จัดการระบบทัวร์ ลูกค้า การจอง พนักงาน และรายงานสำหรับผู้ดูแลระบบ</div>
+            <ul class="feature-list">
+                <li><span class="feature-dot"></span>จัดการลูกค้าและการจอง</li>
+                <li><span class="feature-dot"></span>ดูแลแพ็กเกจทัวร์</li>
+                <li><span class="feature-dot"></span>บริหารโรงแรมและพนักงาน</li>
+                <li><span class="feature-dot"></span>รายงานและสถิติระบบ</li>
+            </ul>
+            <div class="card-cta">
+                <span>Admin Sign In</span>
+                <i class="bi bi-arrow-right"></i>
+            </div>
+        </a>
+    </div>
+
+    <!-- Bottom note -->
+    <div class="bottom-note">
+        <span><i class="bi bi-shield-lock"></i> SSL Encrypted</span>
+        <span><i class="bi bi-globe2"></i> TravelPro v1.0.0</span>
+        <span><i class="bi bi-award"></i> Certified Platform</span>
+    </div>
+</div>
+
+</body>
+</html>

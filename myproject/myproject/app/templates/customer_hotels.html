@@ -1,0 +1,138 @@
+{% extends 'customer_base.html' %}
+{% block content %}
+
+<div class="page-hero">
+    <h1>โรงแรมและที่พัก</h1>
+    <p>เลือกที่พักสุดหรูที่เหมาะกับการเดินทางของคุณ</p>
+</div>
+
+<!-- Hotel cards ONLY — no modals inside here -->
+<div class="row g-4">
+{% for h in hotels %}
+<div class="col-md-4">
+    <div style="background:#fff;border-radius:18px;border:1px solid #eaecf0;
+                box-shadow:0 4px 20px rgba(10,22,40,0.06);
+                transition:transform 0.25s,box-shadow 0.25s;"
+         onmouseenter="this.style.transform='translateY(-5px)';this.style.boxShadow='0 16px 40px rgba(10,22,40,0.12)'"
+         onmouseleave="this.style.transform='';this.style.boxShadow='0 4px 20px rgba(10,22,40,0.06)'">
+
+        <!-- Image -->
+        <div style="position:relative;height:200px;overflow:hidden;border-radius:18px 18px 0 0;
+                    background:linear-gradient(135deg,#0a1628,#1a3a6e);">
+            {% if h.image %}
+            <img src="{{ h.image }}" alt="{{ h.hotel_name }}"
+                 style="width:100%;height:100%;object-fit:cover;"
+                 onerror="this.style.display='none'">
+            {% endif %}
+            <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(10,22,40,0.65) 0%,transparent 55%);"></div>
+            <div style="position:absolute;bottom:14px;left:14px;right:14px;">
+                <div style="font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:#fff;">
+                    {{ h.hotel_name }}
+                </div>
+                <div style="font-size:12px;color:rgba(255,255,255,0.75);margin-top:3px;">
+                    <i class="bi bi-geo-alt-fill" style="color:#e8c97a;"></i> {{ h.location }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Info -->
+        <div style="padding:20px 22px 22px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+                <div>
+                    <div style="font-size:11px;color:#8892a4;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">ราคาต่อคืน</div>
+                    <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:#c9a84c;">฿{{ h.price }}</div>
+                </div>
+                <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;">
+                    <span style="background:#ecfdf5;color:#059669;font-size:11.5px;font-weight:600;padding:4px 12px;border-radius:20px;">พร้อมจอง</span>
+                    <span style="font-size:11.5px;color:#8892a4;">
+                        <i class="bi bi-star-fill" style="color:#c9a84c;font-size:10px;"></i> 4.7
+                    </span>
+                </div>
+            </div>
+            <button class="btn-gold" style="width:100%;justify-content:center;border:none;"
+                    data-bs-toggle="modal"
+                    data-bs-target="#hotelModal{{ h.hotel_id }}">
+                <i class="bi bi-calendar-plus"></i> จองที่พัก
+            </button>
+        </div>
+    </div>
+</div>
+{% empty %}
+<div class="col-12">
+    <div class="card-cus" style="text-align:center;padding:60px;color:#8892a4;">
+        <div style="font-size:40px;margin-bottom:12px;">🏨</div>
+        ยังไม่มีข้อมูลโรงแรม
+    </div>
+</div>
+{% endfor %}
+</div>
+
+<!-- ===================================================
+     MODALS — แยกออกมาอยู่ข้างนอก row/col ทั้งหมด
+     =================================================== -->
+{% for h in hotels %}
+<div class="modal fade" id="hotelModal{{ h.hotel_id }}" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered" style="max-width:460px;">
+        <div class="modal-content" style="border-radius:18px;border:none;
+                    box-shadow:0 24px 64px rgba(10,22,40,0.3);">
+
+            <!-- Header -->
+            <div style="background:linear-gradient(135deg,#0a1628,#1a3a6e);
+                        border-radius:18px 18px 0 0;
+                        padding:22px 26px;
+                        display:flex;justify-content:space-between;align-items:flex-start;">
+                <div>
+                    <div style="font-size:11px;color:rgba(201,168,76,0.8);
+                                letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px;">
+                        🏨 จองที่พัก
+                    </div>
+                    <div style="font-family:'Playfair Display',serif;font-size:18px;
+                                color:white;font-weight:700;">
+                        {{ h.hotel_name }}
+                    </div>
+                    <div style="font-size:12px;color:rgba(255,255,255,0.6);margin-top:4px;">
+                        📍 {{ h.location }} &nbsp;|&nbsp; ฿{{ h.price }}/คืน
+                    </div>
+                </div>
+                <button type="button" class="btn-close btn-close-white"
+                        data-bs-dismiss="modal" style="margin-left:16px;"></button>
+            </div>
+
+            <!-- Body -->
+            <div style="padding:28px;">
+                <form method="POST" action="/browse/book-hotel/">
+                    {% csrf_token %}
+                    <input type="hidden" name="hotel_id" value="{{ h.hotel_id }}">
+
+                    <div style="margin-bottom:18px;">
+                        <label style="display:block;font-size:11px;font-weight:600;
+                                      color:#8892a4;letter-spacing:0.8px;
+                                      text-transform:uppercase;margin-bottom:8px;">
+                            📅 วันเช็คอิน
+                        </label>
+                        <input type="date" name="checkin" class="form-control" required>
+                    </div>
+
+                    <div style="margin-bottom:28px;">
+                        <label style="display:block;font-size:11px;font-weight:600;
+                                      color:#8892a4;letter-spacing:0.8px;
+                                      text-transform:uppercase;margin-bottom:8px;">
+                            📅 วันเช็คเอาท์
+                        </label>
+                        <input type="date" name="checkout" class="form-control" required>
+                    </div>
+
+                    <button type="submit" class="btn-gold"
+                            style="width:100%;justify-content:center;
+                                   padding:13px;font-size:14px;border:none;">
+                        <i class="bi bi-check2-circle"></i> ยืนยันการจองที่พัก
+                    </button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+{% endblock %}

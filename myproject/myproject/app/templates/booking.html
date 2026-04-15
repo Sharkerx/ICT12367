@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="page-header d-flex justify-content-between align-items-start">
+    <div>
+        <h2>Bookings</h2>
+        <p>รายการจองทั้งหมดในระบบ</p>
+    </div>
+    <a href="/tours/" style="text-decoration:none;" class="btn-primary" style="display:inline-flex; align-items:center; gap:8px;">
+        <i class="bi bi-plus-lg"></i> New Booking
+    </a>
+</div>
+
+<div class="card" style="padding:0; overflow:hidden;">
+    <table class="table mb-0">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Customer</th>
+                <th>Tour</th>
+                <th>Date</th>
+                <th>Guide</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for b in data %}
+        <tr>
+            <td><span style="font-weight:700; color:#0a1628; font-family:'Playfair Display',serif;">#{{ b.booking_id }}</span></td>
+            <td style="font-weight:500;">{{ b.cus_name }}</td>
+            <td style="color:#8892a4;">{{ b.tour_name }}</td>
+            <td style="font-size:13px; color:#8892a4;">{{ b.start }} → {{ b.end }}</td>
+            <td>
+                {% if b.guide %}
+                    <span style="background:#eff6ff; color:#2563eb; font-size:11.5px; font-weight:600; padding:3px 10px; border-radius:20px;">{{ b.guide }}</span>
+                {% else %}
+                    <span style="background:#fef2f2; color:#dc2626; font-size:11.5px; font-weight:600; padding:3px 10px; border-radius:20px;">No Guide</span>
+                {% endif %}
+            </td>
+            <td>
+                {% if b.status == 'Confirmed' %}
+                    <span style="background:#ecfdf5; color:#059669; font-size:11.5px; font-weight:600; padding:4px 12px; border-radius:20px; display:inline-flex; align-items:center; gap:5px;">
+                        <span style="width:6px;height:6px;background:#059669;border-radius:50%;"></span> {{ b.status }}
+                    </span>
+                {% elif b.status == 'Cancelled' %}
+                    <span style="background:#fef2f2; color:#dc2626; font-size:11.5px; font-weight:600; padding:4px 12px; border-radius:20px; display:inline-flex; align-items:center; gap:5px;">
+                        <span style="width:6px;height:6px;background:#dc2626;border-radius:50%;"></span> {{ b.status }}
+                    </span>
+                {% elif b.status == 'Pending' %}
+                    <span style="background:#fffbeb; color:#d97706; font-size:11.5px; font-weight:600; padding:4px 12px; border-radius:20px; display:inline-flex; align-items:center; gap:5px;">
+                        <span style="width:6px;height:6px;background:#d97706;border-radius:50%;"></span> {{ b.status }}
+                    </span>
+                {% else %}
+                    <span style="background:#f3f4f6; color:#6b7280; font-size:11.5px; font-weight:600; padding:4px 12px; border-radius:20px; display:inline-flex; align-items:center; gap:5px;">
+                        <span style="width:6px;height:6px;background:#6b7280;border-radius:50%;"></span> {{ b.status }}
+                    </span>
+                {% endif %}
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="6" style="text-align:center; padding:48px; color:#8892a4;">
+                <div style="font-size:32px; margin-bottom:10px;">🧾</div>
+                ยังไม่มีการจอง
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}
